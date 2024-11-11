@@ -1,0 +1,25 @@
+<div class="container">
+  <h1>Score</h1>
+  <h2><%= @word %></h2>
+  <% letters = params[:letters].split("") %>
+  <% valid_word = @word.upcase.chars.all? { |letter| letters.include?(letter) && @word.upcase.count(letter) <= letters.count(letter) } %>
+  <% url = "https://dictionary.lewagon.com/#{@word}" %>
+  <% require 'json'
+     require 'open-uri'
+     begin
+       dictionary_valid = JSON.parse(URI.open(url).read)["found"]
+     rescue
+       dictionary_valid = false
+     end %>
+
+  <% if valid_word && dictionary_valid %>
+    <p>Congratulations! <strong>"<%= @word.upcase %>"</strong> is a valid English word that can be built from the given letters!</p>
+  <% elsif !valid_word %>
+    <p>Sorry, <strong>"<%= @word.upcase %>"</strong> cannot be built from <%= letters.join(", ") %></p>
+  <% else %>
+    <p>Sorry, <strong>"<%= @word.upcase %>"</strong> is not a valid English word.</p>
+  <% end %>
+  <div class="play-again">
+    <%= link_to "Play Again", new_path, class: "form input[type='submit']" %>
+  </div>
+</div>
